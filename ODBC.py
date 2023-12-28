@@ -34,7 +34,16 @@ class ODBC():
         self.conn = pyodbc.connect(connection_string)
 
         self.cursor = self.conn.cursor()  
+    
+    def s_no_max(self):
         
+        query = 'SELECT MAX(S_NO) FROM VEHICLE'
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        
+        return result[0]
+    
+    
     def insert_account_details(self, details):
         
         query = 'INSERT INTO PERSON (PERSON_ID, NAME, DOB, GENDER, EMAIL, USERNAME, PASSWORD, CONTACT_NO, ROLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
@@ -70,7 +79,7 @@ class ODBC():
         
     def add_vehicle_db(self, details):
         
-        query = 'INSERT INTO VEHICLE (VEHICLE_ID, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_SERVICED, VEHICLE_AVAILABILTY, VEHICLE_RENT_PRICE, VEHICLE_RENT_COUNT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        query = 'INSERT INTO VEHICLE (S_NO, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_SERVICED, VEHICLE_AVAILABILTY, VEHICLE_RENT_PRICE, VEHICLE_RENT_COUNT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
         values = tuple(details) 
         self.cursor.execute(query, values)
         self.cursor.commit()
@@ -78,7 +87,7 @@ class ODBC():
     
     def view_vehicle(self, details: List[str], order: str = 'VEHICLE_NAME', desc: bool = False) -> List[List[str]]:
         
-        query = f"SELECT VEHICLE_ID, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY  FROM VEHICLE ORDER BY {order} {'DESC' if desc else ''}"
+        query = f"SELECT S_NO, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY  FROM VEHICLE ORDER BY {order} {'DESC' if desc else ''}"
         self.cursor.execute(query)
         veh_rows = list(self.cursor.fetchall())
         
@@ -87,9 +96,9 @@ class ODBC():
     def view_vehicle_by(self, choice):
         d = {1:'VEHICLE_SERVICED', 2:'VEHICLE_AVAILABILTY'}
         if choice == 1:
-            query = f"SELECT VEHICLE_ID, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY FROM VEHICLE WHERE {d[choice]} = TRUE"
+            query = f"SELECT S_NO, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY FROM VEHICLE WHERE {d[choice]} = TRUE"
         elif choice == 2:
-            query = f"SELECT VEHICLE_ID, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY FROM VEHICLE WHERE {d[choice]} = FALSE"
+            query = f"SELECT S_NO, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY FROM VEHICLE WHERE {d[choice]} = FALSE"
             
         self.cursor.execute(query)
         veh_rows = list(self.cursor.fetchall())
@@ -99,7 +108,7 @@ class ODBC():
     def search_vehicle(self, choice, name_number):
         d = {1:'VEHICLE_NAME', 2:'VEHICLE_NO'}
         
-        query = f"SELECT VEHICLE_ID, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY FROM VEHICLE WHERE {d[choice]} = '{name_number}'"
+        query = f"SELECT S_NO, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY FROM VEHICLE WHERE {d[choice]} = '{name_number}'"
 
         self.cursor.execute(query)
         veh_rows = list(self.cursor.fetchall())
@@ -115,12 +124,22 @@ class ODBC():
     def update_vehicle(self, choice, name_number):
         d = {1:'VEHICLE_NAME', 2:'VEHICLE_NO'}
         
-        query = f"SELECT VEHICLE_ID, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY FROM VEHICLE WHERE {d[choice]} = '{name_number}'"
+        query = f"SELECT S_NO, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY FROM VEHICLE WHERE {d[choice]} = '{name_number}'"
 
         self.cursor.execute(query)
         veh_rows = list(self.cursor.fetchall())
         
         return veh_rows
+        
+    def modify_vehicle(self, col_name, val, veh_no):
+        
+        query = f"UPDATE VEHICLE SET {col_name} =  {val} WHERE VEHICLE_NO = {veh_no}"
+        try:
+            self.cursor.execute(query)
+            self.cursor.commit()
+            return True
+        except:
+            return False
         
 
 # In[ ]:

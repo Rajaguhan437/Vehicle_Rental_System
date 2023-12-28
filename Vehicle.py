@@ -90,10 +90,9 @@ class Vehicle(ODBC):
             except:
                 rprint('Enter Rent Price in rupees in integer format only')
                 continue
-        
-        veh_id = type+no
-        
-        return [veh_id, veh_name, type, no, veh_kms, serv, veh_availability, veh_rent_price, 0]
+            
+        s_no = ODBC().s_no_max()
+        return [s_no, veh_name, type, no, veh_kms, serv, veh_availability, veh_rent_price, 0]
     
     def view_vehicle(self):
         
@@ -168,7 +167,6 @@ class Vehicle(ODBC):
         
         print()
         table = Table(title="VEHICLE DETAILS", row_styles=["","bold"],header_style="bold",box=SQUARE)
-        table.add_column("S. No.", style="cyan", no_wrap=True, justify="center")
         table.add_column("ID", style="magenta", no_wrap=True, justify="center")
         table.add_column("NAME", justify="center", style="green", no_wrap=True)
         table.add_column("TYPE", justify="center", style="yellow", no_wrap=True)
@@ -190,9 +188,9 @@ class Vehicle(ODBC):
                 else:
                     temp.append(i[j])
             if c % 2 == 0:
-                table.add_row(str(c), *[str(value) for value in temp])
+                table.add_row(*[str(value) for value in temp])
             else:
-                table.add_row(str(c), *[str(value) for value in temp])
+                table.add_row(*[str(value) for value in temp])
         console = Console()
         console.print(table,no_wrap=True)
     def clearScreen(self):
@@ -214,6 +212,49 @@ class Vehicle(ODBC):
         else:
             
             rprint('No Vehicle Available')
+    
+    def modify_vehicle(self):
+        
+        while True:
+            self.clearScreen()
+            print()
+            rprint('1. Vehicle_Name')
+            rprint('2. Vehicle_Type')
+            rprint('3. Vehicle_Number')
+            rprint('4. Vehicle_KMS_Travelled')
+            rprint('5. Vehicle_Serviced_Status')
+            rprint('6. Vehicle_Rent_Status')
+            rprint('7. Vehicle_Rent_Price')
+            rprint('8. Vehicle_Rent_Count')
+            print()
+            veh_no = input('Enter the Vehicle_Number | Q to back : ')
+            if veh_no == 'Q'or veh_no ==  'q':
+                break
+            print()
+            ODBC().search_vehicle(veh_no)
+            print()
+            d =  {1:'VEHICLE_NAME', 2:'VEHICLE_NO', 3:'VEHICLE_KMS', 4:'VEHICLE_SERVICED', 5:'VEHICLE_AVAILABILTY', 6:'VEHICLE_RENT_PRICE', 7:'VEHICLE_RENT_COUNT'}
+            while True:
+                mod_choice = input('Enter the Column to MODIFY | Q to back : ')
+                if mod_choice == 'Q'or mod_choice ==  'q':
+                    break
+                elif mod_choice not in d:
+                    print('Invalid Choice!!! Try Again')     
+                    break
+                new_val = input("Enter the new Value to modify | Q to back :")
+                if new_val == 'Q' or new_val ==  'q':
+                    break
+                res = ODBC().modify_vehicle(d[mod_choice], new_val, veh_no)
+                if res:
+                    self.clearScreen()
+                    print()
+                    ODBC().search_vehicle(veh_no)
+                    print()
+                    print('Successfully Modified')
+                    break
+                else:
+                    print('Invalid New VALUE | Try Again with Correct Value')
+                    break
 
 
 # %%

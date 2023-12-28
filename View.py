@@ -134,35 +134,7 @@ class View(Account, Vehicle, ODBC):
                 ODBC().search_vehicle(veh_no)
                 
             elif choice == '8':
-                
-                self.clearScreen()
-                print()
-                rprint('1. Vehicle_Name')
-                rprint('2. Vehicle_Type')
-                rprint('3. Vehicle_Number')
-                rprint('4. Vehicle_KMS_Travelled')
-                rprint('5. Vehicle_Serviced_Status')
-                rprint('6. Vehicle_Rent_Status')
-                rprint('7. Vehicle_Rent_Price')
-                rprint('8. Vehicle_Rent_Count')
-                print()
-                
-                veh_no = input('Enter the Vehicle_Number | Q to back : ')
-                if veh_no == 'Q'or veh_no ==  'q':
-                    continue
-                print()
-                ODBC().search_vehicle(veh_no)
-                print()
-                
-                d =  {1:'VEHICLE_NAME', 2:'VEHICLE_NO', 3:'VEHICLE_KMS', 4:'VEHICLE_SERVICED', 5:'VEHICLE_AVAILABILTY', 6:'VEHICLE_RENT_PRICE', 7:'VEHICLE_RENT_COUNT'}
-                while True:
-                    mod_choice = input('Enter the Column to MODIFY | Q to back : ')
-                    if mod_choice == 'Q'or mod_choice ==  'q':
-                        break
-                    elif mod_choice not in d:
-                        break
-                else:
-                    ODBC().modify_vehicle(mod_choice, veh_no)
+                Vehicle().modify_vehicle()
                 
             elif choice == '9':
                 self.clearScreen()
