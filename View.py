@@ -73,7 +73,17 @@ class View(Account, Vehicle, ODBC):
                 print('Invalid Choice!!! Try Again')    
     
     def renter(self):
-        pass
+        x = 1
+        while x:
+            print()
+            print()
+            rprint('1. View Rentals')
+            rprint('2. ADD Vehicle')
+            rprint('3. View Serviced Vehicle')
+            rprint('4. View Rented Out Vehicle')
+            
+            choice = input('Enter your choice : ')
+            print()
     
     
     def admin(self):
@@ -131,7 +141,7 @@ class View(Account, Vehicle, ODBC):
                 veh_no = input('Enter the Vehicle_Number | Q to back : ')
                 if veh_no == 'Q'or veh_no ==  'q':
                     continue
-                ODBC().search_vehicle(veh_no)
+                ODBC().remove_vehicle(veh_no)
                 
             elif choice == '8':
                 Vehicle().modify_vehicle()
@@ -142,7 +152,14 @@ class View(Account, Vehicle, ODBC):
                 break
                 
     def clearScreen(self):
-        os.system('cls')
+        print()
+        console = Console()
+        with Progress(console=console) as progress:
+            task = progress.add_task("[red]Processing Pls Wait...", total=5)
+            for i in range(3):
+                time.sleep(1)
+                progress.update(task, advance=1)
+        os.system('cls' if os.name == 'nt' else 'clear')
             
 
 

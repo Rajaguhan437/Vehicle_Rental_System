@@ -9,9 +9,12 @@ from rich.console import Console
 from rich import print as rprint
 from rich.table import Table, box
 from rich.box import SQUARE
+from rich.live import Live
+from rich.progress import Progress
 
 from ODBC import ODBC
 import os
+import time
 class Vehicle(ODBC):
     
     def __init__(self):
@@ -177,13 +180,13 @@ class Vehicle(ODBC):
         table.add_column("SERVICED", justify="center", style="green", no_wrap=True)
         table.add_column("RENT_AVAIL", justify="center", style="green", no_wrap=True)
         c = 0
-        for i in res:
+        for z,i in enumerate(res):
             c += 1
             temp = []
             for j in range(len(i)):
-                if i[j] == 1:
+                if i[j] == 1 and j>5:
                     temp.append("✅")
-                elif i[j] == 0:
+                elif i[j] == 0 and j>5:
                     temp.append("❌")
                 else:
                     temp.append(i[j])
@@ -194,67 +197,76 @@ class Vehicle(ODBC):
         console = Console()
         console.print(table,no_wrap=True)
     def clearScreen(self):
-        os.system('cls')
+        print()
+        console = Console()
+        with Progress(console=console) as progress:
+            task = progress.add_task("[red]Processing Pls Wait...", total=5)
+            for i in range(3):
+                time.sleep(1)
+                progress.update(task, advance=1)
+        os.system('cls' if os.name == 'nt' else 'clear')
     
     def search_vehicle(self, choice ,input_value):
-        d = {1:'VEHICLE_NAME', 2:'VEHICLE_NO'}
+        d = {1:'VEHICLE_NAME', 2:'VEHICLE_NO', 3:'S_NO'}
         res = ODBC().search_vehicle(choice, input_value)
         if res:
             self.table_display(res)
+            return True
         else:
             print()
             rprint('No Vehicle Available with',d[choice] ,input_value)
+            return False
     def view_vehicle_by(self, choice):
         
         res = ODBC().view_vehicle_by(choice)
         if res:
             self.table_display(res)
         else:
-            
             rprint('No Vehicle Available')
     
     def modify_vehicle(self):
         
         while True:
             self.clearScreen()
+            
+            veh_no = input('Enter the Vehicle_ID | Q to back : ')
+            if veh_no.lower() == 'q':
+                return False
+            print()
+            veh_chk = self.search_vehicle(3,veh_no)
+            if not veh_chk:
+                break
+            d =  {'1':'VEHICLE_NAME', '2':'VEHICLE_NO','3':'VEHICLE_TYPE', '4':'VEHICLE_KMS', '5':'VEHICLE_SERVICED', '6':'VEHICLE_AVAILABILTY', 
+            '7':'VEHICLE_RENT_PRICE', '8':'VEHICLE_RENT_COUNT'}
             print()
             rprint('1. Vehicle_Name')
-            rprint('2. Vehicle_Type')
-            rprint('3. Vehicle_Number')
+            rprint('2. Vehicle_Number')
+            rprint('3. Vehicle_Type')
             rprint('4. Vehicle_KMS_Travelled')
             rprint('5. Vehicle_Serviced_Status')
             rprint('6. Vehicle_Rent_Status')
             rprint('7. Vehicle_Rent_Price')
             rprint('8. Vehicle_Rent_Count')
             print()
-            veh_no = input('Enter the Vehicle_Number | Q to back : ')
-            if veh_no == 'Q'or veh_no ==  'q':
-                break
-            print()
-            ODBC().search_vehicle(veh_no)
-            print()
-            d =  {1:'VEHICLE_NAME', 2:'VEHICLE_NO', 3:'VEHICLE_KMS', 4:'VEHICLE_SERVICED', 5:'VEHICLE_AVAILABILTY', 6:'VEHICLE_RENT_PRICE', 7:'VEHICLE_RENT_COUNT'}
+        
             while True:
                 mod_choice = input('Enter the Column to MODIFY | Q to back : ')
-                if mod_choice == 'Q'or mod_choice ==  'q':
+                if mod_choice.lower() == 'q':
                     break
                 elif mod_choice not in d:
                     print('Invalid Choice!!! Try Again')     
-                    break
+                    continue
                 new_val = input("Enter the new Value to modify | Q to back :")
-                if new_val == 'Q' or new_val ==  'q':
+                if  new_val.lower() ==  'q':
                     break
-                res = ODBC().modify_vehicle(d[mod_choice], new_val, veh_no)
+                res = ODBC().modify_vehicle(d[mod_choice], new_val, int(veh_no))
                 if res:
                     self.clearScreen()
                     print()
-                    ODBC().search_vehicle(veh_no)
-                    print()
-                    print('Successfully Modified')
+                    ODBC().search_vehicle(3,veh_no)
+                    print('\nSuccessfully Modified')
                     break
                 else:
-                    print('Invalid New VALUE | Try Again with Correct Value')
+                    print('Modification failed. Please try again with a correct value.')
                     break
-
-
 # %%

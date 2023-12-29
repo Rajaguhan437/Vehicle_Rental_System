@@ -41,7 +41,7 @@ class ODBC():
         self.cursor.execute(query)
         result = self.cursor.fetchone()
         
-        return result[0]
+        return result[0]+1
     
     
     def insert_account_details(self, details):
@@ -106,15 +106,14 @@ class ODBC():
         return veh_rows
     
     def search_vehicle(self, choice, name_number):
-        d = {1:'VEHICLE_NAME', 2:'VEHICLE_NO'}
-        
+        d = {1:'VEHICLE_NAME', 2:'VEHICLE_NO', 3:'S_NO'}
         query = f"SELECT S_NO, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT, VEHICLE_SERVICED, VEHICLE_AVAILABILTY FROM VEHICLE WHERE {d[choice]} = '{name_number}'"
 
         self.cursor.execute(query)
         veh_rows = list(self.cursor.fetchall())
         
         return veh_rows
-    def search_vehicle(self, name_number):
+    def remove_vehicle(self, name_number):
         
         query = f"DELETE FROM VEHICLE WHERE VEHICLE_NO  = '{name_number}'"
 
@@ -133,7 +132,7 @@ class ODBC():
         
     def modify_vehicle(self, col_name, val, veh_no):
         
-        query = f"UPDATE VEHICLE SET {col_name} =  {val} WHERE VEHICLE_NO = {veh_no}"
+        query = f"UPDATE VEHICLE SET {col_name} =  {val} WHERE S_NO = {veh_no}"
         try:
             self.cursor.execute(query)
             self.cursor.commit()
