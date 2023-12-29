@@ -76,14 +76,22 @@ class View(Account, Vehicle, ODBC):
         x = 1
         while x:
             print()
-            print()
             rprint('1. View Rentals')
-            rprint('2. ADD Vehicle')
-            rprint('3. View Serviced Vehicle')
-            rprint('4. View Rented Out Vehicle')
+            rprint('2. Book Rentals')
+            rprint('3. Return Rentals')
+            rprint('4. Rental History')
+            rprint('5. Log OUT')
             
-            choice = input('Enter your choice : ')
-            print()
+            choice = input('Enter your choice | Q to back ')
+            if choice.lower() == 'q':
+                break
+            elif choice == '1' or choice=='2':
+                res = ODBC().view_vehicle_rentals()
+                Vehicle().table_display(res, False)
+                
+                if choice == '2':
+                    
+                
     
     
     def admin(self):
@@ -163,11 +171,11 @@ class View(Account, Vehicle, ODBC):
             
 
 
-1# In[24]:
+# In[24]:
 
 
 x = View()
-y = x.admin()
+y = x.renter()
 
 
 # %%

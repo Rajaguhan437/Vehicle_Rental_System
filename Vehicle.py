@@ -166,7 +166,7 @@ class Vehicle(ODBC):
         res = ODBC().view_vehicle(name, order)
         if res:
             self.table_display(res)
-    def table_display(self, res):
+    def table_display(self, res, all=True):
         
         print()
         table = Table(title="VEHICLE DETAILS", row_styles=["","bold"],header_style="bold",box=SQUARE)
@@ -177,8 +177,9 @@ class Vehicle(ODBC):
         table.add_column("KMS_TRAVELLED", justify="center", style="green", no_wrap=True)
         table.add_column("RENT_PRICE", justify="center", style="magenta", no_wrap=True)
         table.add_column("RENT_COUNT", justify="center", style="green", no_wrap=True)
-        table.add_column("SERVICED", justify="center", style="green", no_wrap=True)
-        table.add_column("RENT_AVAIL", justify="center", style="green", no_wrap=True)
+        if all:
+            table.add_column("SERVICED", justify="center", style="green", no_wrap=True)
+            table.add_column("RENT_AVAIL", justify="center", style="green", no_wrap=True)
         c = 0
         for z,i in enumerate(res):
             c += 1

@@ -113,6 +113,7 @@ class ODBC():
         veh_rows = list(self.cursor.fetchall())
         
         return veh_rows
+    
     def remove_vehicle(self, name_number):
         
         query = f"DELETE FROM VEHICLE WHERE VEHICLE_NO  = '{name_number}'"
@@ -140,6 +141,14 @@ class ODBC():
         except:
             return False
         
+    def view_vehicle_rentals(self):
+        
+        query = f"SELECT S_NO, VEHICLE_NAME, VEHICLE_TYPE, VEHICLE_NO, VEHICLE_KMS, VEHICLE_RENT_PRICE,  VEHICLE_RENT_COUNT  FROM VEHICLE WHERE VEHICLE_AVAILABILTY = TRUE AND VEHICLE_SERVICED = TRUE"
+
+        self.cursor.execute(query)
+        veh_rows = list(self.cursor.fetchall())
+        
+        return veh_rows
 
 # In[ ]:
 
